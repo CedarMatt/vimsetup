@@ -17,6 +17,38 @@ set splitbelow
 set splitright
 set noea
 
+"set spell
+set spelllang=en_us
+
+set omnifunc=ale#completion#OmniFunc
+
+set hlsearch
+set smartcase
+
+syntax on
+set wrap
+
+set laststatus=2
+set number
+set ruler
+set title
+
+set encoding=utf-8
+
+set matchpairs+=<:>
+
+set t_Co=256
+
+set rtp+=/opt/homebrew/opt/fzf
+
+" Make terminal swicth to I-Bar while in Insert mode
+set t_RV =
+let &t_SI = "\e[6 q"
+let &t_EI = "\e[2 q"
+
+" MacOS support for "delete" key on keyboard
+set backspace=indent,eol,start
+
 set bg=dark
 colorscheme gruvbox
 
@@ -24,8 +56,6 @@ let g:background='dark'
 
 let g:airline_powerline_fonts=1
 let g:airline_theme='gruvbox'
-"let g:airline_theme='solarized'
-"let g:airline_theme='deus'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extentions#battery#enabled=1
 let g:airline#extentions#branch#enabled=1
@@ -58,35 +88,6 @@ let g:fzf_tags_command = 'ctags -R'
 
 let g:NERDTreeWinSize=50
 
-"set spell
-set spelllang=en_us
-
-set omnifunc=ale#completion#OmniFunc
-
-set hlsearch
-set smartcase
-
-syntax on
-set wrap
-
-set laststatus=2
-set number
-set ruler
-set title
-
-set encoding=utf-8
-
-set matchpairs+=<:>
-
-set t_Co=256
-
-set rtp+=/opt/homebrew/opt/fzf
-
-" Config cursor to change with modes
-set t_RV =
-let &t_SI = "\e[6 q"
-let &t_EI = "\e[2 q"
-
 augroup cursorCmds
     autocmd!
     " make cursor become a block on entering vim
@@ -95,9 +96,6 @@ augroup cursorCmds
     " make cursor become an I-bar on leaving vim
     autocmd VimLeave * silent !echo -ne "\e[6 q"
 augroup END
-
-
-set backspace=indent,eol,start
 
 nmap <F5> :NERDTreeRefreshRoot<CR>
 nnoremap <C-j> :bprevious<CR>
@@ -129,8 +127,11 @@ autocmd FileType python autocmd BufWritePre <buffer> CleanWhitespace
 autocmd StdinReadPre * let s:std_int=1
 autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | wincmd p | endif
 
+" Once vim is loaded force a complete redraw (have some strange artifacts if
+" this doesn't happen
 autocmd VimEnter * redraw!
 
+" If NERDTree is the only pane open, exit.
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 
 let g:NERDTreeDirArrowExpandable=''
@@ -146,25 +147,3 @@ autocmd BufReadPost *
             \ | endif
 
 autocmd Filetype typescriptreact setlocal tabstop=2 shiftwidth=2
-
-function! Smart_TabComplete()
-    let line = getline('.')
-    let substr = strpart(line, -1, col('.')+1)
-    let substr = matchstr(substr, "[^ \t]*$")
-
-    if (strlen(substr)==0)
-        return "\<tab>"
-    endif
-
-    let has_period = match(substr, '\.') != -1
-    let has_slash = match(substr, '\/') != -1
-    if (!has_period && !has_slash)
-        return "\<C-X>\<C-P>"
-    elseif ( has_slash )
-        return "\<C-X>\<C-F>"
-    else
-        return "\<C-X>\<C-O>"
-    endif
-endfunction
-
-" inoremap <tab> <c-r>=Smart_TabComplete()<CR>
